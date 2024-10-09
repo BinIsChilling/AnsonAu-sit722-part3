@@ -1,24 +1,30 @@
 # Your Solution
-version: '3'
-services:
+version: "3.8"
 
+services:
   book_catalog:
-    build: 
-      context:  ./book_catalog
+    image: book-catalog:latest
+    build:
+      context: ./book_catalog
       dockerfile: Dockerfile
-    container_name: book_catalog
     environment:
-      DATABASE_URL: postgresql://books_inventory_user:9hNFJrnxrxlTVYcGkiVFuBEhvu5hFNoh@dpg-criiimm8ii6s73f45to0-a.oregon-postgres.render.com/books_inventory
+      - DATABASE_URL=postgresql://books_inventory_user:9hNFJrnxrxlTVYcGkiVFuBEhvu5hFNoh@dpg-criiimm8ii6s73f45to0-a.oregon-postgres.render.com/books_inventory
+    volumes:
+      - ./book_catalog:/app
     ports:
       - "8000:8000"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
 
   inventory_management:
+    image: inventory-management:latest
     build:
       context: ./inventory_management
       dockerfile: Dockerfile
-    container_name: inventory_management
     environment:
-      DATABASE_URL: postgresql://books_inventory_user:9hNFJrnxrxlTVYcGkiVFuBEhvu5hFNoh@dpg-criiimm8ii6s73f45to0-a.oregon-postgres.render.com/books_inventory
+      - DATABASE_URL=postgresql://books_inventory_user:9hNFJrnxrxlTVYcGkiVFuBEhvu5hFNoh@dpg-criiimm8ii6s73f45to0-a.oregon-postgres.render.com/books_inventory
+    volumes:
+      - ./inventory_management:/app
     ports:
-      - "8001:8001"
+      - "8001:8000"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
 
